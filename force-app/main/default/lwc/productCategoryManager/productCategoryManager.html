@@ -1,0 +1,77 @@
+<template>
+    <lightning-card title="Product Categories">
+
+    <lightning-button 
+        label="Add Category" 
+        title="Add Category "
+        variant="brand" 
+        onclick={openModal} 
+        class="slds-m-around_medium">
+    </lightning-button>
+
+   <lightning-datatable 
+    key-field="Id"
+    data={categories}
+    columns={columns}
+    onrowaction={handleRowAction}>
+</lightning-datatable>
+    </lightning-card>
+
+
+    <!-- Modal for Adding/Editing Product Category -->
+    <template if:true={isModalOpen}>
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open">
+  <div class="slds-modal__container">
+    <button class="slds-button slds-button_icon slds-modal__close" onclick={closeModal} aria-label="Cancel and close">
+      <svg class="slds-button__icon slds-button__icon_large" aria-hidden="true" viewBox="0 0 520 520">
+        <path d="M310 254l130-131c6-6 6-15 0-21l-20-21c-6-6-15-6-21 0L268 212a10 10 0 01-14 0L123 80c-6-6-15-6-21 0l-21 21c-6 6-6 15 0 21l131 131c4 4 4 10 0 14L80 399c-6 6-6 15 0 21l21 21c6 6 15 6 21 0l131-131a10 10 0 0114 0l131 131c6 6 15 6 21 0l21-21c6-6 6-15 0-21L310 268a10 10 0 010-14z" />
+      </svg>
+      <span class="slds-assistive-text">
+        Cancel and close
+      </span>
+    </button>
+    <div class="slds-modal__header">
+      <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate" tabindex="-1">
+        Modal header
+      </h1>
+    </div>
+
+    <!-- Modal Body -->
+
+    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+     
+        <lightning-input
+            label="Category Name"
+            name="categoryName"
+            value={categoryName}
+            onchange={handleChange}>
+        </lightning-input>
+        <lightning-input
+            label="Description"
+            name="description"
+            value={description}
+            onchange={handleChange}>
+        </lightning-input>
+        <lightning-input
+            label="Category Code"
+            name="categoryCode"
+            value={categoryCode}
+            onchange={handleChange}>
+        </lightning-input>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="slds-modal__footer">
+      <button class="slds-button slds-button_neutral" aria-label="Cancel and close"
+        onclick={closeModal}>
+        Cancel
+      </button>
+      <button class="slds-button slds-button_brand" onclick={handleSave}>
+        Save
+      </button>
+    </div>
+  </div>
+</section>
+<div class="slds-backdrop slds-backdrop_open" role="presentation" ></div>
+    </template>
+</template>
