@@ -28,8 +28,6 @@ export default class SupplierManager extends LightningElement {
              } 
         }
     ];
-ggggggg;
-kkkk;
     suppliers;
     supplierWiredResult;
     isModalOpen = false;

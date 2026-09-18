@@ -1,0 +1,87 @@
+<template>
+    <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_medium">
+        <div class="slds-modal__container">
+            <!-- Header -->
+            <header class="slds-modal__header">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                    <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small"></lightning-icon>
+                </button>
+                <h2 class="slds-modal__title slds-hyphenate">Add Medicines</h2>
+            </header>
+
+            <!-- Body -->
+            <div class="slds-modal__content slds-p-around_medium">
+                <template for:each={items} for:item="item" for:index="index">
+                    <div key={item.key} class="slds-grid slds-gutters slds-m-bottom_small slds-grid_vertical-align-center">
+                        <!-- Product Picker -->
+                        <div class="slds-col slds-size_5-of-12">
+                            <lightning-record-picker
+                                label="Medicine / Product"
+                                name="product"
+                                data-index={index}
+                                object-api-name="Product2"
+                                value={item.Product__c}
+                                display-info={displayInfo}
+                                matching-info={matchingInfo}
+                                onchange={handleRowChange}>
+                            </lightning-record-picker>
+                        </div>
+
+                        <!-- Quantity -->
+                        <div class="slds-col slds-size_3-of-12">
+                            <lightning-input
+                                type="number"
+                                label="Quantity"
+                                name="quantity"
+                                data-index={index}
+                                value={item.Quantity__c}
+                                min="1"
+                                onchange={handleRowChange}>
+                            </lightning-input>
+                        </div>
+
+                        <!-- Unit Price -->
+                        <div class="slds-col slds-size_3-of-12">
+                            <lightning-input
+                                type="number"
+                                label="Unit Price"
+                                name="unitPrice"
+                                data-index={index}
+                                value={item.Unit_Price__c}
+                                formatter="currency"
+                                step="0.01"
+                                onchange={handleRowChange}>
+                            </lightning-input>
+                        </div>
+
+                        <!-- Delete Row Button -->
+                        <div class="slds-col slds-size_1-of-12 slds-m-top_medium">
+                            <lightning-button-icon
+                                icon-name="utility:delete"
+                                alternative-text="Delete Row"
+                                data-index={index}
+                                onclick={handleRemoveRow}
+                                disabled={isOnlyOneRow}>
+                            </lightning-button-icon>
+                        </div>
+                    </div>
+                </template>
+
+                <div class="slds-m-top_medium">
+                    <lightning-button
+                        label="Add Another Medicine"
+                        icon-name="utility:add"
+                        onclick={handleAddRow}>
+                    </lightning-button>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="slds-modal__footer">
+                <lightning-button label="Cancel" onclick={closeModal} class="slds-m-right_x-small"></lightning-button>
+                <lightning-button label="Save Line Items" variant="brand" onclick={handleSave}></lightning-button>
+            </footer>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+</template>

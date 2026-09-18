@@ -2,6 +2,9 @@ import { LightningElement, wire } from 'lwc';
 import getProductCategories from '@salesforce/apex/ProductCategoryController.getProductCategories';
 import saveProductCagegory from '@salesforce/apex/ProductCategoryController.saveProductCagegory';
 import { refreshApex } from '@salesforce/apex'; // 1. Import refreshApex
+import editProductCategory from '@salesforce/apex/ProductCategoryController.editProductCategory';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import deleteProductCategory from '@salesforce/apex/ProductCategoryController.deleteProductCategory';
 
 export default class productCategoryManager extends LightningElement {
 
@@ -22,9 +25,10 @@ export default class productCategoryManager extends LightningElement {
 
     categoryName;
     description;
-    categoryCode
+    categoryCode;
     categories;
     wiredResult;
+    recordId;
 
     handleChange(event){
         const field = event.target.name;
@@ -42,10 +46,52 @@ export default class productCategoryManager extends LightningElement {
         }
     }
 
+    handleRowAction(event){
+
+        const actionName = event.detail.action.name;
+        const data = event.detail.row;
+        this.recordId=data.Id;
+
+        if(actionName=='edit'){
+            this.editAction(data);
+        }
+        else if (actionName=='delete'){
+            this.deleteAction(data);
+        }    
+         
+        
+    }
+
+    editAction(data){
+        this.recordId=data.Id;
+        this.categoryName= data.Name;
+        this.description= data.Description__c;
+        this.categoryCode = data.Category_Code__c;
+        this.isModalOpen=true;
+        
+    }
+
+    deleteAction(data){
+       if(confirm('Are you sure you want to delete category: ', this.categoryName)){
+         deleteProductCategory({recordId: data.Id})
+         .then(()=>{
+            this.showToast(
+                'Success',
+                    'Category deleted successfully',
+                    'success'
+            );
+            this.resetForm(this.wiredResult);
+            this.isModalOpen=false;
+            return refreshApex(this.wiredResult);
+         })
+
+
+       }
+
+    }
 
     @wire(getProductCategories)
-    wiredProductCategories(result,a){
-        debugger;
+    wiredProductCategories(result){
         this.wiredResult=result;
         if(result.data){
             this.categories=result.data;
@@ -58,7 +104,19 @@ export default class productCategoryManager extends LightningElement {
     }
 
     handleSave(){
-        
+        ;
+          // 1. Query all lightning-input fields inside the template
+    const allValid = [...this.template.querySelectorAll('lightning-input')]
+        .reduce((validSoFar, inputFields) => {
+            inputFields.reportValidity(); // Displays error messages on required/invalid fields
+            return validSoFar && inputFields.checkValidity();
+        }, true);
+
+    // 2. Stop execution if any field is invalid or empty
+    if (!allValid) {
+        return;
+    }
+        if(!this.recordId){
         saveProductCagegory({
             categoryName: this.categoryName,
             description: this.description,
@@ -68,13 +126,37 @@ export default class productCategoryManager extends LightningElement {
             this.isModalOpen=false;
             this.resetForm();
             return refreshApex(this.wiredResult);
-        }
-        .catch();
-        );
-        )
-        )
-        
+        })
+        .catch(error=>{
+            console.error('Error in catch occured: ', error);
+
+        });    
     }
+
+    else if(this.recordId){
+        ;
+        editProductCategory({
+            
+            recordId: this.recordId,
+            Name: this.categoryName,
+            description: this.description,
+            categoryCode: this.categoryCode
+
+        })
+        .then(()=>{
+            this.showToast(
+                'success',
+                'category updated successfully',
+                'success'
+            )
+            this.resetForm();
+            this.isModalOpen=false;
+            refreshApex(this.wiredResult);
+
+        })
+        .catch();
+    }
+}
     isModalOpen= false;
 
     openModal(){
@@ -83,10 +165,21 @@ export default class productCategoryManager extends LightningElement {
     closeModal(){
         this.isModalOpen = false;
     }
+
+    showToast(title, message, varient){
+    this.dispatchEvent(
+        new ShowToastEvent({
+            title,
+            message,
+            varient
+        })
+    );
+}
     
     resetForm(){
         this.categoryName='';
         this.categoryCode='';
         this.description='';
+        this.recordId='';
     }
 }
