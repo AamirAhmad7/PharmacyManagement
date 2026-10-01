@@ -19,10 +19,28 @@ export default class SalesOrderDetail extends LightningElement {
         { label: 'Unit Price', fieldName: 'UnitPrice', type: 'currency' },
         { label: 'Subtotal', fieldName: 'Subtotal', type: 'currency' }
     ];
+// // This is the part that receives/reads c__recordId.
+// CurrentPageReference represents information about the current page/navigation.
+
+// It can contain things such as:
+
+// Current Page
+//     │
+//     ├── Page type
+//     ├── Page name
+//     └── State parameters
+//              │
+//              └── c__recordId
+// So this line basically says:
+
+// "Salesforce, watch the current page reference and provide it to me."  
 
     @wire(CurrentPageReference)
     getStateParameters(currentPageReference) {
+        // This asks: "Does the current page reference contain c__recordId?" The ?. is called optional chaining.
+        // It safely checks: currentPageReference then currentPageReference.state then currentPageReference.state.c__recordId
         if (currentPageReference?.state?.c__recordId) {
+            // It takes the ID from the navigation information and stores it in your component's variable:
             this.recordId = currentPageReference.state.c__recordId;
         }
     }

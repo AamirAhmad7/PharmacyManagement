@@ -148,9 +148,12 @@ export default class SalesOrderManager extends NavigationMixin(LightningElement)
     handleRowAction(event) {
         const actionName = event.detail.action.name;
         const row = event.detail.row;
+        
+
+// This  telling Salesforce: "Open the Lightning App Page whose API name is Sales_Order_Detail, and carry this value with the navigation."
 
         if (actionName === 'view') {
-            this[NavigationMixin.Navigate]({
+            this[NavigationMixin.Navigate]({ 
                 type: 'standard__navItemPage',
                 attributes: {
                     apiName: 'Sales_Order_Detail'
