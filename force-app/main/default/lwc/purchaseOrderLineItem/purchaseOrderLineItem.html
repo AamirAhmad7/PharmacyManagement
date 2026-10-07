@@ -29,17 +29,74 @@
             </header>
 
             <!-- Modal Body -->
-            <div class="slds-modal__content slds-p-around_medium">
+<div class="slds-modal__content slds-p-around_medium">
 
-                <template for:each={items} for:item="item">
-                    <div key={item.key} class="slds-m-bottom_small">
+    <template for:each={items} for:item="item" for:index="index">
 
-                        <h2>Modal Body</h2>
+        <div
+            key={item.key}
+            class="slds-grid slds-gutters slds-m-bottom_small"
+        >
 
-                    </div>
-                </template>
-
+            <!-- Product -->
+            <div class="slds-col slds-size_5-of-12">
+                <lightning-record-picker
+                    label="Medicine / Product"
+                    name="product"
+                    data-index={index}
+                    object-api-name="Product2"
+                    value={item.Product__c}
+                    onchange={handleRowChange}>
+                </lightning-record-picker>
             </div>
+
+            <!-- Quantity -->
+            <div class="slds-col slds-size_3-of-12">
+                <lightning-input
+                    type="number"
+                    label="Quantity"
+                    name="quantity"
+                    data-index={index}
+                    value={item.Quantity__c}
+                    min="1"
+                    onchange={handleRowChange}>
+                </lightning-input>
+            </div>
+
+            <!-- Unit Price -->
+            <div class="slds-col slds-size_3-of-12">
+                <lightning-input
+                    type="number"
+                    label="Unit Price"
+                    name="unitPrice"
+                    data-index={index}
+                    value={item.Unit_Price__c}
+                    formatter="currency"
+                    step="0.01"
+                    onchange={handleRowChange}>
+                </lightning-input>
+            </div>
+            <div class="slds-col slds-size_1-of-12 slds-m-top_medium">
+                            <lightning-button-icon
+                                icon-name="utility:delete"
+                                alternative-text="Delete Row"
+                                data-index={index}
+                                onclick={handleRemoveRow}
+                                disabled={isOnlyOneRow}>
+                            </lightning-button-icon>
+                        </div>
+
+        </div>
+
+    </template>
+
+    <lightning-button
+        variant="neutral"
+        label="Add Line Item"
+        onclick={addLineItem}
+    ></lightning-button>
+
+</div>
 
             <!-- Modal Footer -->
             <footer class="slds-modal__footer">
